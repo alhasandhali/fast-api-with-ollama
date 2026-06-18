@@ -37,7 +37,7 @@ import urllib.parse  # ফাইলের একদম উপরে এই ই�
 app = FastAPI()
 
 @app.get("/ai")
-def stream_ai(prompt: str, model: str = "llama3.2"): # ডিফল্ট মডেল llama3.2
+def stream_ai(prompt: str, model: str = "llama3.2"):
     url = "http://localhost:11434/api/generate"
     
     payload = {
@@ -54,40 +54,5 @@ def stream_ai(prompt: str, model: str = "llama3.2"): # ডিফল্ট মড
                 token = json_data.get("response", "")
                 encoded_token = urllib.parse.quote(token)
                 yield f"data: {encoded_token}\n\n"
-
-    return StreamingResponse(generate_tokens(), media_type="text/event-stream")
-
-# # @get এর জায়গায় app.get হবে
-# @app.get("/ai")
-# def stream_ai(prompt: str):
-#     url = "http://localhost:11434/api/generate"
-    
-#     payload = {
-#         "model": "llama3.2",
-#         "prompt": prompt,
-#         "stream": True 
-#     }
-
-
-#     def generate_tokens():
-#         response = requests.post(url, json=payload, stream=True)
-#         for line in response.iter_lines():
-#             if line:
-#                 json_data = json.loads(line.decode('utf-8'))
-#                 token = json_data.get("response", "")
-                
-#                 # পুরো টোকেনটাকে ইউআরএল এনকোড করে ফেলুন (যেমন: " am" হয়ে যাবে "%20am")
-#                 encoded_token = urllib.parse.quote(token)
-                    
-#                 yield f"data: {encoded_token}\n\n"
-
-    # def generate_tokens():
-    #     response = requests.post(url, json=payload, stream=True)
-    #     for line in response.iter_lines():
-    #         if line:
-    #             json_data = json.loads(line.decode('utf-8'))
-    #             token = json_data.get("response", "")
-    #             yield f"data: {token}\n\n"
-    #             # yield f"{token}"
 
     return StreamingResponse(generate_tokens(), media_type="text/event-stream")
